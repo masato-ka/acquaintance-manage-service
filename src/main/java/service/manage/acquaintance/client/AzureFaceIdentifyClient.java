@@ -1,7 +1,9 @@
 package service.manage.acquaintance.client;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,26 +18,40 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import service.manage.acquaintance.client.model.FaceDetectResult;
+import service.manage.acquaintance.client.model.Identify;
 import service.manage.acquaintance.client.model.Person;
 import service.manage.acquaintance.client.model.PersonGroup;
+import service.manage.acquaintance.client.model.ResultIdentify;
 
 @Component
 public class AzureFaceIdentifyClient {
 
 	private final RestTemplate restTemplate;
-	private final String subscriptionKey = "";
+	@Value("${azure.face.api.subscription}")
+	private String subscriptionKey;
 	
-	@Value("${api.ServerUrl}/face/v1.0/persongroups")
+	@Value("{$azure.face.api.ServerUrl}/face/v1.0/identify")
+	private String identifyFaceUri;
+	@Value("{$azure.face.api.ServerUrl}/face/v1.0/detect")
+	private String faceDetectUri;
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups")
 	private String personGroupUri;
-	@Value("${api.ServerUrl}/face/v1.0/persongroups/{personGroup}")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroup}")
 	private String personGroupWithIdUri;
-	@Value("${api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/train")
+	private String personGroupTrainUri;
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons")
 	private String personUri;
-	@Value("${api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons/{personId}")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons/{personId}")
 	private String personWithIdUri;
-	@Value("${api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces")
 	private String personFaceUri;
-	@Value("${api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}")
 	private String personFaceWithIdUri;
 	
 	public AzureFaceIdentifyClient(RestTemplateBuilder restTemplateBuilder){
@@ -148,15 +164,70 @@ public class AzureFaceIdentifyClient {
 		restTemplate.exchange(requestEntity, Void.class);
 	}
 	
-	public void train(){
+	public void train(String groupId){
+		URI targetUri = UriComponentsBuilder
+					.fromUriString(personGroupTrainUri)
+					.buildAndExpand(groupId)
+					.toUri();
+		RequestEntity<Void> requestEntity = RequestEntity
+					.post(targetUri)
+					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
+					.build();
+		restTemplate.exchange(requestEntity, Void.class);
+	}	
+	
+	public List<ResultIdentify> identifyFace(String groupId, int maxNumofConRet, double threthold, byte[] image){
 		
+		List<String> faceIds = faceDetect(image);
+		
+		Identify payload = new Identify();
+		payload.setFaceIds(faceIds);
+		
+		URI targetUri = UriComponentsBuilder
+					.fromUriString(identifyFaceUri).build()
+					.toUri();
+		
+		RequestEntity<Identify> requestEntity = RequestEntity
+					.post(targetUri)
+					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
+					.body(payload);
+		
+		ResponseEntity<List<ResultIdentify>> result = restTemplate.exchange(requestEntity, 
+					new ParameterizedTypeReference<List<ResultIdentify>>(){});
+		
+		return result.getBody();
 	}
 	
-	public void retrain(){
+	public List<String> faceDetect(byte[] image){
+		URI targetUri = UriComponentsBuilder
+					.fromUriString(faceDetectUri).build()
+					.toUri();
 		
-	}
-	
-	public void identifyFace(){
+		RequestEntity<byte[]> requestEntity = RequestEntity
+					.post(targetUri)
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
+					.body(image);
+		
+		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity,String.class);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonNode;
+		List<String> result = new ArrayList<>();
+		try {
+			jsonNode = objectMapper.readTree(responseEntity.getBody());
+			if (jsonNode.isArray()) {
+			    for (final JsonNode objNode : jsonNode) {
+			        result.add(objNode.get("faceId").asText());
+			    }
+			}
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 		
 	}
 	
