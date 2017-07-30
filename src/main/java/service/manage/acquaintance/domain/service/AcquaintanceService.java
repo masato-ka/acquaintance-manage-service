@@ -19,5 +19,9 @@ public class AcquaintanceService {
 		return acqua;
 	}
 	
+	public Acquaintance getOneWithAzurePersonId(String azurePsersonId){
+		return acquaRepository.findOneByAzurePersonId(azurePsersonId);
+	}
+	
 	
 }

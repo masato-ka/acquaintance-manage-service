@@ -179,6 +179,10 @@ public class AzureFaceIdentifyClient {
 		
 		List<String> faceIds = faceDetect(image);
 		
+		if(faceIds.isEmpty()){
+			throw new RuntimeException("No contain human face in the image.");
+		}
+		
 		Identify payload = new Identify();
 		payload.setFaceIds(faceIds);
 		

@@ -14,9 +14,9 @@ public class ResultIdentify {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	static class PersonIdentify{
+	public static class PersonIdentify{
 		private String personId;
-		private double confidence;
+		private Double confidence;
 	}
 	
 	private String faceId;
