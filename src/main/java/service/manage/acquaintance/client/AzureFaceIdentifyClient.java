@@ -45,9 +45,9 @@ public class AzureFaceIdentifyClient {
 	private String personGroupWithIdUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/train")
 	private String personGroupTrainUri;
-	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons")
 	private String personUri;
-	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroup}/persons/{personId}")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}")
 	private String personWithIdUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces")
 	private String personFaceUri;
@@ -58,7 +58,7 @@ public class AzureFaceIdentifyClient {
 		restTemplate = restTemplateBuilder.rootUri("https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect").build();
 	}
 	
-	public PersonGroup createPersonGroup(String groupId, String groupName, String userData) throws URISyntaxException{
+	public void createPersonGroup(String groupId, String groupName, String userData){
 		
 		URI targetUri = UriComponentsBuilder.fromUriString(personGroupWithIdUri).buildAndExpand(groupId).toUri();
 		Map<String,String> payload = new HashMap<>();
@@ -70,13 +70,12 @@ public class AzureFaceIdentifyClient {
 					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.body(payload);
 		
-		ResponseEntity<PersonGroup> response = restTemplate.exchange(requestEntity, PersonGroup.class);
-		return response.getBody();		
+		ResponseEntity<Void> response = restTemplate.exchange(requestEntity, Void.class);	
 	}
 	
-	public List<PersonGroup> getPersonGroup() throws URISyntaxException{
+	public List<PersonGroup> getPersonGroup() {
 		
-		URI uri = new URI(personGroupUri);
+		URI uri = UriComponentsBuilder.fromUriString(personGroupUri).build().toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.get(uri)
 					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
@@ -86,7 +85,7 @@ public class AzureFaceIdentifyClient {
 		return responseEntity.getBody();
 	}
 	
-	public void deletePersonGroups(String groupId) throws URISyntaxException{
+	public void deletePersonGroups(String groupId) {
 		URI targetUri = UriComponentsBuilder.fromUriString(personGroupWithIdUri).buildAndExpand(groupId).toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.delete(targetUri)
@@ -95,8 +94,7 @@ public class AzureFaceIdentifyClient {
 		restTemplate.exchange(requestEntity, Void.class);
 	}
 	
-	public Person createPerson(String groupId, String personName, String userData) 
-			throws URISyntaxException{
+	public Map<String,String> createPerson(String groupId, String personName, String userData) {
 		URI targetUri = UriComponentsBuilder.fromUriString(personUri).buildAndExpand(groupId).toUri();
 		Map<String, String> payload = new HashMap<>();
 		payload.put("name", personName);
@@ -106,11 +104,12 @@ public class AzureFaceIdentifyClient {
 						.post(targetUri)
 						.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 						.body(payload);
-		ResponseEntity<Person> responseEntity = restTemplate.exchange(requestEntity, Person.class);
+		ResponseEntity<Map<String,String>> responseEntity = restTemplate.exchange(requestEntity,
+					new ParameterizedTypeReference<Map<String,String>>(){});
 		return responseEntity.getBody();
 	}
 	
-	public Person getPerson(String groupId, String personId) throws URISyntaxException{
+	public Person getPerson(String groupId, String personId) {
 		URI targetUri = UriComponentsBuilder.fromUriString(personWithIdUri).buildAndExpand(groupId,personId).toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.get(targetUri)
@@ -121,7 +120,7 @@ public class AzureFaceIdentifyClient {
 		return responseEntity.getBody();
 	}
 	
-	public List<Person> getPersons(String groupId) throws URISyntaxException{
+	public List<Person> getPersons(String groupId) {
 		URI targetUri = UriComponentsBuilder.fromUriString(personUri).buildAndExpand(groupId).toUri();
 		
 		RequestEntity<Void> requestEntity = RequestEntity
