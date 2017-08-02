@@ -1,4 +1,4 @@
-package service.manage.acquaintance.client.error;
+package service.manage.acquaintance.client.exception.handler;
 
 import java.io.IOException;
 

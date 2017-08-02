@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import service.manage.acquaintance.client.interceptor.AuthHeaderRequestInterceptor;
 import service.manage.acquaintance.client.model.FaceDetectResult;
 import service.manage.acquaintance.client.model.Identify;
 import service.manage.acquaintance.client.model.Person;
@@ -34,8 +35,6 @@ import service.manage.acquaintance.client.model.ResultIdentify;
 public class AzureFaceIdentifyClient {
 	
 	private final RestTemplate restTemplate;
-	@Value("${azure.face.api.subscription}")
-	private String subscriptionKey;
 	
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/identify")
 	private String identifyFaceUri;
@@ -56,8 +55,11 @@ public class AzureFaceIdentifyClient {
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}")
 	private String personFaceWithIdUri;
 	
-	public AzureFaceIdentifyClient(RestTemplateBuilder restTemplateBuilder){
-		restTemplate = restTemplateBuilder.rootUri("https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect").build();
+	public AzureFaceIdentifyClient(RestTemplateBuilder restTemplateBuilder,
+									AuthHeaderRequestInterceptor authHeaderRequestInterceptor){
+		restTemplate = restTemplateBuilder
+				.interceptors(authHeaderRequestInterceptor)
+				.rootUri("https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect").build();
 	}
 	
 	public void createPersonGroup(String groupId, String groupName, String userData){
@@ -69,7 +71,6 @@ public class AzureFaceIdentifyClient {
 		
 		RequestEntity<Map<String,String>> requestEntity = RequestEntity
 					.put(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.body(payload);
 		
 		ResponseEntity<Void> response = restTemplate.exchange(requestEntity, Void.class);	
@@ -80,7 +81,6 @@ public class AzureFaceIdentifyClient {
 		URI uri = UriComponentsBuilder.fromUriString(personGroupUri).build().toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.get(uri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.build();
 		ResponseEntity<List<PersonGroup>> responseEntity = restTemplate.exchange(requestEntity, 
 										new ParameterizedTypeReference<List<PersonGroup>>(){});
@@ -91,7 +91,6 @@ public class AzureFaceIdentifyClient {
 		URI targetUri = UriComponentsBuilder.fromUriString(personGroupWithIdUri).buildAndExpand(groupId).toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.delete(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.build();
 		restTemplate.exchange(requestEntity, Void.class);
 	}
@@ -104,7 +103,6 @@ public class AzureFaceIdentifyClient {
 		
 		RequestEntity<Map<String,String>> requestEntity = RequestEntity
 						.post(targetUri)
-						.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 						.body(payload);
 		ResponseEntity<Map<String,String>> responseEntity = restTemplate.exchange(requestEntity,
 					new ParameterizedTypeReference<Map<String,String>>(){});
@@ -115,7 +113,6 @@ public class AzureFaceIdentifyClient {
 		URI targetUri = UriComponentsBuilder.fromUriString(personWithIdUri).buildAndExpand(groupId,personId).toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.get(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.build();
 		ResponseEntity<Person> responseEntity = restTemplate.exchange(requestEntity, Person.class);
 
@@ -127,7 +124,6 @@ public class AzureFaceIdentifyClient {
 		
 		RequestEntity<Void> requestEntity = RequestEntity
 				.get(targetUri)
-				.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 				.build();
 		ResponseEntity<List<Person>> responseEntity = restTemplate.exchange(requestEntity, 
 				new ParameterizedTypeReference<List<Person>>(){});
@@ -144,7 +140,6 @@ public class AzureFaceIdentifyClient {
 
 		RequestEntity<Void> requestEntity = RequestEntity
 				.delete(targetUri)
-				.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 				.build();
 		
 		restTemplate.exchange(requestEntity,  Void.class);
@@ -160,7 +155,6 @@ public class AzureFaceIdentifyClient {
 		
 		RequestEntity<byte[]> requestEntity = RequestEntity
 					.post(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.body(image);
 		
@@ -176,7 +170,6 @@ public class AzureFaceIdentifyClient {
 					.toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.delete(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.build();
 		restTemplate.exchange(requestEntity, Void.class);
 	}
@@ -188,7 +181,6 @@ public class AzureFaceIdentifyClient {
 					.toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.post(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.build();
 		restTemplate.exchange(requestEntity, Void.class);
 	}	
@@ -213,7 +205,6 @@ public class AzureFaceIdentifyClient {
 		
 		RequestEntity<Identify> requestEntity = RequestEntity
 					.post(targetUri)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.body(payload);
 		
 		ResponseEntity<List<ResultIdentify>> result = restTemplate.exchange(requestEntity, 
@@ -230,7 +221,6 @@ public class AzureFaceIdentifyClient {
 		RequestEntity<byte[]> requestEntity = RequestEntity
 					.post(targetUri)
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
-					.header("Ocp-Apim-Subscription-Key", subscriptionKey)
 					.body(image);
 		
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity,String.class);
