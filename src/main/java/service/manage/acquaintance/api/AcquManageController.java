@@ -1,5 +1,6 @@
 package service.manage.acquaintance.api;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,67 +18,74 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import service.manage.acquaintance.domain.model.Acquaintance;
-import service.manage.acquaintance.domain.model.SearchResult;
+import service.manage.acquaintance.domain.model.FaceImage;
+import service.manage.acquaintance.domain.service.AcquaintanceService;
+import service.manage.acquaintance.domain.service.FaceImageService;
 
 @RestController
 @RequestMapping(path="/api/v1/acquaintancies")
 @Api(value="acquaintancies", description="ユーザ情報の管理を行うAPI")
 public class AcquManageController {
 	
+	private final AcquaintanceService acquService;
+	private final FaceImageService faceImageService;
+	
+	public AcquManageController(AcquaintanceService acquService, FaceImageService faceImageService){
+		this.acquService = acquService;
+		this.faceImageService = faceImageService;
+	}
+	
 	@GetMapping
 	@ApiOperation(value = "登録されているユーザ情報を全件取得",response = Iterable.class)
 	public List<Acquaintance> getAllAcqu(){
-		List<Acquaintance> result = null;
+		List<Acquaintance> result = acquService.getAcquaList();
 		return result;
 	}
 	
 	@PostMapping
 	@ApiOperation(value = "ユーザ情報を1件追加する。", response = Acquaintance.class)
 	public Acquaintance saveAcqu(@RequestBody Acquaintance acquaintance){
-		Acquaintance result = null;
-		return result;
+		return acquService.save(acquaintance);
 	}
 	
 	@GetMapping(path="/{id}")
 	@ApiOperation(value = "指定したIDのAcquaintance情報を１件取得する。", response = Acquaintance.class)
-	public Acquaintance getAcqua(@PathVariable Integer acquaitanceId){
-		return new Acquaintance();
+	public Acquaintance getAcqua(@PathVariable int acquaitanceId){
+		return acquService.getAcquaById(acquaitanceId);
 	}
 	
 	@PutMapping(path="/{id}")
 	@ApiOperation(value = "指定したIDのAcquaintance情報を１件更新する。", response = Acquaintance.class)
-	public Acquaintance updateAcqua(@PathVariable Integer acquaitanceId, @RequestBody Acquaintance acquaintance){
-		return new Acquaintance();
+	public Acquaintance updateAcqua(@PathVariable int acquaitanceId, @RequestBody Acquaintance acquaintance){
+		acquaintance.setPersonId(acquaitanceId);
+		return acquService.update(acquaintance);
 	}
 	
 	@DeleteMapping(path="/{id}")
-	@ApiOperation(value = "指定したIDのAcquaintance情報を削除する。また紐付いている画像データも削除する。", response = Acquaintance.class)
-	public Acquaintance deleateAcqua(){
-		return new Acquaintance();
+	@ApiOperation(value = "指定したIDのAcquaintance情報を削除する。また紐付いている画像データも削除する。")
+	public void deleateAcqua(@PathVariable int acquaintanceId){
+		acquService.delete(acquaintanceId);
 	}
 	
-	@PostMapping(path="/{id}/image")
-	@ApiOperation(value = "指定したIDへ画像データを追加する。", response = Acquaintance.class)
+	@PutMapping(path="/{id}/images")
+	@ApiOperation(value = "指定したIDへ画像データを追加する。")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "画像データの追加に成功"),
             @ApiResponse(code = 409, message = "すでに画像が登録されているため追加できません。")
     }
     )
-	public Acquaintance createImage(@PathVariable Integer acquaitanceId, @RequestBody MultipartFile multiPartFile){
-		Acquaintance result = new Acquaintance();
-		result.setSavedImage(true);
-		return new Acquaintance();
+	public FaceImage putImage(@PathVariable Integer acquaintanceId, @RequestBody MultipartFile trainImage) throws IOException{
+		Acquaintance acquaintance = acquService.getAcquaById(acquaintanceId);
+		FaceImage result = faceImageService.saveFaceImage(acquaintance, trainImage.getBytes());
+		
+		return result;
 	}
 
-	@PutMapping(path="/{id}/image")
-	@ApiOperation(value = "指定したIDの画像データを更新する。", response = Acquaintance.class)
-	@ApiResponses(value = {
-            @ApiResponse(code = 200, message = "画像データの更新に成功しました。"),
-            @ApiResponse(code = 404, message = "画像が登録されていないため更新に失敗しました。")
-    }
-	)
-	public Acquaintance updateImage(@PathVariable Integer acquaintanceId, @RequestBody MultipartFile multiPartFile){
-		return new Acquaintance();
+	@DeleteMapping(path="/{id}/images/{imageId}")
+	@ApiOperation(value = "指定した画像IDの画像を削除する。")
+	public void deleteImage(@PathVariable Integer acquaintaneId, @PathVariable Integer imageId){
+		Acquaintance acquaintance = acquService.getAcquaById(acquaintaneId);
+		faceImageService.deleteFaceImage(acquaintaneId, imageId);
 	}
 	
 	@GetMapping(path="/{id}/image")

@@ -1,8 +1,11 @@
 package service.manage.acquaintance.domain.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,11 +24,16 @@ public class Acquaintance {
 	@Id
 	@GeneratedValue
 	private Integer personId;
-	@JsonIgnore
-	private String azurePersonId;
 	private String personName;
 	private Integer age;
 	private String sex;
-	private boolean savedImage;
+	@OneToMany(mappedBy="acquaintance")
+	private List<FaceImage> faceImage;
+
+	@JsonIgnore
+	private String azurePersonId;
+	@JsonIgnore
+	private String azureGroupId;
+
 	
 }

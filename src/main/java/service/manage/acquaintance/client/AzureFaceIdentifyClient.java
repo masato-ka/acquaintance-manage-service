@@ -134,6 +134,22 @@ public class AzureFaceIdentifyClient {
 		
 	}
 	
+	public void deletePerson(String groupId, String personId) {
+		URI targetUri = UriComponentsBuilder
+					.fromUriString(personWithIdUri)
+					.buildAndExpand(groupId, personId)
+					.toUri();
+
+		RequestEntity<Void> requestEntity = RequestEntity
+				.delete(targetUri)
+				.header("Ocp-Apim-Subscription-Key", subscriptionKey)
+				.build();
+		
+		restTemplate.exchange(requestEntity,  Void.class);
+		
+	}
+
+	
 	public Map<String,String> addPersonFaceImage(String groupId, String personId, byte[] image){
 		URI targetUri = UriComponentsBuilder
 					.fromUriString(personFaceUri)
@@ -151,7 +167,7 @@ public class AzureFaceIdentifyClient {
 		return 		responseEntity.getBody();
 	}
 	
-	public void deleatePersonFaceImage(String groupId, String personId, String persistedFaceId){
+	public void deletePersonFaceImage(String groupId, String personId, String persistedFaceId){
 		URI targetUri = UriComponentsBuilder
 					.fromUriString(personFaceWithIdUri)
 					.buildAndExpand(groupId, personId, persistedFaceId)
@@ -233,5 +249,6 @@ public class AzureFaceIdentifyClient {
 		return result;
 		
 	}
+
 	
 }

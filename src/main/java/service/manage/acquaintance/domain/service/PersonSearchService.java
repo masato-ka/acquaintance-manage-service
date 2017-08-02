@@ -19,7 +19,7 @@ public class PersonSearchService {
 	private final AcquaintanceService acquService;
 	private final AzureFaceIdentifyClient afiClient;
 	
-	@Value("${azure.face.api.max_number_con}:3")
+	@Value("${azure.face.api.max_number_con:3}")
 	private Integer maxNumofConRet; 
 	@Value("${azure.face.api.threthold:0.7}")
 	private double threthold;
