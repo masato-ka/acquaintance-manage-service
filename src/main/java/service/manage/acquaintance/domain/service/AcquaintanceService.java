@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import service.manage.acquaintance.client.AzureFaceIdentifyClient;
 import service.manage.acquaintance.domain.model.Acquaintance;
-import service.manage.acquaintance.domain.model.FaceImage;
 import service.manage.acquaintance.domain.repository.AcquaintanceRepository;
 
 @Service
@@ -34,12 +34,24 @@ public class AcquaintanceService {
 		
 		//TODO Acquaintance オブジェクトの各プロパティ名の採番タイミングなどを検討する必要あり。
 		acqua.setAzureGroupId(groupId);
-		Map<String,String> personId = afiClient
-					.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
-		//TODO 上記処理失敗時に以降処理せずエラーにすること。
+		Map<String, String> personId = null;
+		try{
+			personId = afiClient
+						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
+		}catch(HttpClientErrorException e){
+			if(e.getMessage().equals("404 Not Found")){
+				afiClient.createPersonGroup(groupId, "test", "Hackason.");
+				personId = afiClient
+						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
+			}else{
+				throw e;
+			}
+		
+		}
+			//TODO 上記処理失敗時に以降処理せずエラーにすること。
 		acqua.setAzurePersonId(personId.get("personId"));
-		acquaRepository.save(acqua);
-		return acqua;
+		Acquaintance result = acquaRepository.save(acqua);
+		return result;
 	}
 	
 	public Acquaintance update(Acquaintance acqua){
@@ -72,5 +84,8 @@ public class AcquaintanceService {
 		return acquaRepository.findOneByAzurePersonId(azurePsersonId);
 	}
 	
+	public void deletePersonGroup(){
+		afiClient.deletePersonGroups(groupId);
+	}
 	
 }

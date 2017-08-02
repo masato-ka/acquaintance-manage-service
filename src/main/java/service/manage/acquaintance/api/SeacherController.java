@@ -21,6 +21,7 @@ import service.manage.acquaintance.domain.service.PersonSearchService;
 @RequestMapping(path="/api/v1/searcher")
 @Api(value="searcher", description="画像からユーザ検索を行うAPI")
 public class SeacherController {
+	
 	@Value("${azure.face.api.groupId:default}")
 	private String groupId;
 	private final PersonSearchService personSearchService;
@@ -42,11 +43,17 @@ public class SeacherController {
 		try {
 			searchResult = this.personSearchService.search(groupId, image.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO searcherの処理
 			e.printStackTrace();
 		}
 		
 		return searchResult;
+	}
+	
+	@PostMapping(path="/train")
+	@ApiOperation(value = "学習器の学習を実行する事前に、acquaintance APIを使いデータを投入する必要がある。")
+	public void train(){
+		personSearchService.train(groupId);
 	}
 	
 }

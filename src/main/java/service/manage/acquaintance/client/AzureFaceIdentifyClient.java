@@ -22,22 +22,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.client.model.FaceDetectResult;
 import service.manage.acquaintance.client.model.Identify;
 import service.manage.acquaintance.client.model.Person;
 import service.manage.acquaintance.client.model.PersonGroup;
 import service.manage.acquaintance.client.model.ResultIdentify;
 
+@Slf4j
 @Component
 public class AzureFaceIdentifyClient {
-
+	
 	private final RestTemplate restTemplate;
 	@Value("${azure.face.api.subscription}")
 	private String subscriptionKey;
 	
-	@Value("{$azure.face.api.ServerUrl}/face/v1.0/identify")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/identify")
 	private String identifyFaceUri;
-	@Value("{$azure.face.api.ServerUrl}/face/v1.0/detect")
+	@Value("${azure.face.api.ServerUrl}/face/v1.0/detect")
 	private String faceDetectUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/persongroups")
 	private String personGroupUri;
@@ -201,7 +203,10 @@ public class AzureFaceIdentifyClient {
 		
 		Identify payload = new Identify();
 		payload.setFaceIds(faceIds);
-		
+		payload.setPersonGroupId(groupId);
+		payload.setMaxNumOfCandidatesReturned(maxNumofConRet);
+		payload.setConfidenceThreshold(threthold);
+		log.info(payload.toString());
 		URI targetUri = UriComponentsBuilder
 					.fromUriString(identifyFaceUri).build()
 					.toUri();

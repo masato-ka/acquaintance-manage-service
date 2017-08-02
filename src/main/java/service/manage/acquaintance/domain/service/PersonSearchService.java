@@ -55,4 +55,8 @@ public class PersonSearchService {
 		return result;
 	}
 	
+	public void train(String groupId){
+		afiClient.train(groupId);
+	}
+	
 }
