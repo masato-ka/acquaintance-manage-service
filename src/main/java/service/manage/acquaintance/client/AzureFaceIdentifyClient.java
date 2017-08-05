@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.expression.spel.ast.TypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,8 @@ public class AzureFaceIdentifyClient {
 	
 	private final RestTemplate restTemplate;
 	
+	@Value("{azure.face.api.ServerUrl}")
+	private String rootUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/identify")
 	private String identifyFaceUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/detect")
@@ -59,91 +63,67 @@ public class AzureFaceIdentifyClient {
 									AuthHeaderRequestInterceptor authHeaderRequestInterceptor){
 		restTemplate = restTemplateBuilder
 				.interceptors(authHeaderRequestInterceptor)
-				.rootUri("https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect").build();
+				.rootUri(rootUri)
+				.build();
 	}
 	
 	public void createPersonGroup(String groupId, String groupName, String userData){
-		
-		URI targetUri = UriComponentsBuilder.fromUriString(personGroupWithIdUri).buildAndExpand(groupId).toUri();
 		Map<String,String> payload = new HashMap<>();
 		payload.put("name", groupName);
 		payload.put("userData", userData);
-		
-		RequestEntity<Map<String,String>> requestEntity = RequestEntity
-					.put(targetUri)
-					.body(payload);
-		
-		ResponseEntity<Void> response = restTemplate.exchange(requestEntity, Void.class);	
+		restTemplate.put(personGroupWithIdUri, payload, groupId);
 	}
 	
 	public List<PersonGroup> getPersonGroup() {
-		
+		/*
 		URI uri = UriComponentsBuilder.fromUriString(personGroupUri).build().toUri();
 		RequestEntity<Void> requestEntity = RequestEntity
 					.get(uri)
 					.build();
-		ResponseEntity<List<PersonGroup>> responseEntity = restTemplate.exchange(requestEntity, 
-										new ParameterizedTypeReference<List<PersonGroup>>(){});
-		return responseEntity.getBody();
+*/
+		List<PersonGroup> result = Arrays.asList(
+							restTemplate.getForObject(personGroupUri, PersonGroup[].class)
+						);
+		return result;
 	}
 	
 	public void deletePersonGroups(String groupId) {
-		URI targetUri = UriComponentsBuilder.fromUriString(personGroupWithIdUri).buildAndExpand(groupId).toUri();
-		RequestEntity<Void> requestEntity = RequestEntity
-					.delete(targetUri)
-					.build();
-		restTemplate.exchange(requestEntity, Void.class);
+		restTemplate.delete(personGroupWithIdUri, groupId);
 	}
 	
 	public Map<String,String> createPerson(String groupId, String personName, String userData) {
-		URI targetUri = UriComponentsBuilder.fromUriString(personUri).buildAndExpand(groupId).toUri();
+		URI targetUri = UriComponentsBuilder
+				.fromUriString(personUri)
+				.buildAndExpand(groupId)
+				.toUri();
+	
 		Map<String, String> payload = new HashMap<>();
 		payload.put("name", personName);
 		payload.put("userData", userData);
 		
 		RequestEntity<Map<String,String>> requestEntity = RequestEntity
-						.post(targetUri)
-						.body(payload);
-		ResponseEntity<Map<String,String>> responseEntity = restTemplate.exchange(requestEntity,
-					new ParameterizedTypeReference<Map<String,String>>(){});
-		return responseEntity.getBody();
+				.post(targetUri)
+				.body(payload);
+	
+		ResponseEntity<Map<String,String>> responseEntity = 
+				restTemplate.exchange(requestEntity, new ParameterizedTypeReference<Map<String,String>>(){});
+		return 	responseEntity.getBody();
 	}
 	
 	public Person getPerson(String groupId, String personId) {
-		URI targetUri = UriComponentsBuilder.fromUriString(personWithIdUri).buildAndExpand(groupId,personId).toUri();
-		RequestEntity<Void> requestEntity = RequestEntity
-					.get(targetUri)
-					.build();
-		ResponseEntity<Person> responseEntity = restTemplate.exchange(requestEntity, Person.class);
-
-		return responseEntity.getBody();
+		Person result = restTemplate.getForObject(personWithIdUri, Person.class, groupId,personId);
+		return result;
 	}
 	
 	public List<Person> getPersons(String groupId) {
-		URI targetUri = UriComponentsBuilder.fromUriString(personUri).buildAndExpand(groupId).toUri();
-		
-		RequestEntity<Void> requestEntity = RequestEntity
-				.get(targetUri)
-				.build();
-		ResponseEntity<List<Person>> responseEntity = restTemplate.exchange(requestEntity, 
-				new ParameterizedTypeReference<List<Person>>(){});
-
-		return responseEntity.getBody();
-		
+		List<Person> result = Arrays.asList(
+					restTemplate.getForObject(personUri, Person[].class, groupId)
+					);
+		return result;
 	}
 	
 	public void deletePerson(String groupId, String personId) {
-		URI targetUri = UriComponentsBuilder
-					.fromUriString(personWithIdUri)
-					.buildAndExpand(groupId, personId)
-					.toUri();
-
-		RequestEntity<Void> requestEntity = RequestEntity
-				.delete(targetUri)
-				.build();
-		
-		restTemplate.exchange(requestEntity,  Void.class);
-		
+		restTemplate.delete(personWithIdUri, groupId, personId);
 	}
 
 	
@@ -164,25 +144,11 @@ public class AzureFaceIdentifyClient {
 	}
 	
 	public void deletePersonFaceImage(String groupId, String personId, String persistedFaceId){
-		URI targetUri = UriComponentsBuilder
-					.fromUriString(personFaceWithIdUri)
-					.buildAndExpand(groupId, personId, persistedFaceId)
-					.toUri();
-		RequestEntity<Void> requestEntity = RequestEntity
-					.delete(targetUri)
-					.build();
-		restTemplate.exchange(requestEntity, Void.class);
+		restTemplate.delete(personFaceWithIdUri, groupId, personId, persistedFaceId);
 	}
 	
 	public void train(String groupId){
-		URI targetUri = UriComponentsBuilder
-					.fromUriString(personGroupTrainUri)
-					.buildAndExpand(groupId)
-					.toUri();
-		RequestEntity<Void> requestEntity = RequestEntity
-					.post(targetUri)
-					.build();
-		restTemplate.exchange(requestEntity, Void.class);
+		restTemplate.postForObject(personGroupTrainUri, null, Void.class, groupId);
 	}	
 	
 	public List<ResultIdentify> identifyFace(String groupId, int maxNumofConRet, double threthold, byte[] image){

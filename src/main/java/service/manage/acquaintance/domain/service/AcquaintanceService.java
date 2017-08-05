@@ -12,6 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.client.AzureFaceIdentifyClient;
 import service.manage.acquaintance.domain.model.Acquaintance;
 import service.manage.acquaintance.domain.repository.AcquaintanceRepository;
+import service.manage.acquaintance.domain.service.exception.ApiLimitedException;
+import service.manage.acquaintance.domain.service.exception.MalformedRequestException;
+import service.manage.acquaintance.domain.service.exception.ResourceNotFoundException;
+import service.manage.acquaintance.domain.service.exception.TrainingResourceLockException;
+import service.manage.acquaintance.domain.service.exception.UserResourceLimiteException;
 
 @Slf4j
 @Service
@@ -46,18 +51,6 @@ public class AcquaintanceService {
 				afiClient.createPersonGroup(groupId, "test", "Hackason.");
 				personId = afiClient
 						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
-			}else if(HttpStatus.BAD_REQUEST == e.getStatusCode()){
-				//リクエストデータが不正
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.FORBIDDEN == e.getStatusCode()){
-				//ユーザ作成数の上限に到達
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.CONFLICT == e.getStatusCode()){
-				//指定したグループに対してトレーニングを実施中
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.TOO_MANY_REQUESTS == e.getStatusCode()){
-				//単位時間当たりのリクエスト上限に到達。
-				log.error(e.getResponseBodyAsString());
 			}
 		}
 		//TODO 上記処理失敗時に以降処理せずエラーにすること。
@@ -76,23 +69,7 @@ public class AcquaintanceService {
 		//Azure側のIDを取得する。
 		Acquaintance target = acquaRepository.findOne(id);
 		//TODO 紐づく画像データの削除を実行する。
-		try{
-			afiClient.deletePerson(target.getAzureGroupId(), target.getAzurePersonId());
-		}catch(HttpClientErrorException e){
-			if(HttpStatus.NOT_FOUND == e.getStatusCode()){
-				//指定したリソースが存在しない.
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.FORBIDDEN == e.getStatusCode()){
-				//ユーザ作成数の上限に到達
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.CONFLICT == e.getStatusCode()){
-				//指定したグループに対してトレーニングを実施中
-				log.error(e.getResponseBodyAsString());
-			}else if(HttpStatus.TOO_MANY_REQUESTS == e.getStatusCode()){
-				//単位時間当たりのリクエスト上限に到達。
-				log.error(e.getResponseBodyAsString());
-			}
-		}
+		afiClient.deletePerson(target.getAzureGroupId(), target.getAzurePersonId());
 		acquaRepository.delete(id);
 
 	}
