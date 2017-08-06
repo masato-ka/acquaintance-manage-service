@@ -32,11 +32,14 @@ public class AcquManagerExceotionController extends ResponseEntityExceptionHandl
 	@ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
 	@ExceptionHandler(ApiLimitedException.class)
 	public void personGroupNotFoundExceptionHandler(HttpServletRequest req, ApiLimitedException e){
+		//時間を開けてリクエストを投げるようにしたい。
+		
 	}
 	
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(TrainingResourceLockException.class)
 	public void trainingResourceLockExceptionHandler(HttpServletRequest req, TrainingResourceLockException e){
+		//時間を開けてリクエストを投げるようにしたい。
 	}
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -50,10 +50,4 @@ public class SeacherController {
 		return searchResult;
 	}
 	
-	@PostMapping(path="/train")
-	@ApiOperation(value = "学習器の学習を実行する事前に、acquaintance APIを使いデータを投入する必要がある。")
-	public void train(){
-		personSearchService.train(groupId);
-	}
-	
 }
