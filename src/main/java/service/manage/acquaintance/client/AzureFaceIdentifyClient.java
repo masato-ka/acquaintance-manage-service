@@ -31,6 +31,7 @@ import service.manage.acquaintance.client.model.Identify;
 import service.manage.acquaintance.client.model.Person;
 import service.manage.acquaintance.client.model.PersonGroup;
 import service.manage.acquaintance.client.model.ResultIdentify;
+import service.manage.acquaintance.client.model.TrainResult;
 
 @Slf4j
 @Component
@@ -149,7 +150,12 @@ public class AzureFaceIdentifyClient {
 	
 	public void train(String groupId){
 		restTemplate.postForObject(personGroupTrainUri, null, Void.class, groupId);
-	}	
+	}
+	
+	public TrainResult getTraingStatus(String groupId){
+		TrainResult trainResult = restTemplate.getForObject(personGroupTrainUri, TrainResult.class,groupId);
+		return trainResult;
+	}
 	
 	public List<ResultIdentify> identifyFace(String groupId, int maxNumofConRet, double threthold, byte[] image){
 		

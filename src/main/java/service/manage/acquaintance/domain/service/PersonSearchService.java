@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import service.manage.acquaintance.client.AzureFaceIdentifyClient;
 import service.manage.acquaintance.client.model.FaceDetectResult;
 import service.manage.acquaintance.client.model.ResultIdentify;
+import service.manage.acquaintance.client.model.TrainResult;
 import service.manage.acquaintance.domain.model.Acquaintance;
 import service.manage.acquaintance.domain.model.SearchResult;
 
@@ -59,6 +60,11 @@ public class PersonSearchService {
 	
 	public void train(String groupId){
 		afiClient.train(groupId);
+	}
+	
+	public TrainResult getTrainStatus(String groupId){
+		TrainResult trainResult = afiClient.getTraingStatus(groupId);
+		return trainResult;
 	}
 	
 }

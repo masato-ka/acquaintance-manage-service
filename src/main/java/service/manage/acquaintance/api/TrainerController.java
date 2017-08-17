@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import service.manage.acquaintance.client.model.TrainResult;
 import service.manage.acquaintance.domain.service.PersonSearchService;
 
 @RestController
@@ -26,20 +27,22 @@ public class TrainerController {
 	}
 	
 	@PostMapping()
-	@ApiOperation(value = "学習器の学習を実行する。学習は非同期で実行されるため、GETリクエストにて学習の状態を参照する。事前に、acquaintance APIを使いデータを投入する必要がある。")
+	@ApiOperation(value = "学習器の学習を実行する。学習は非同期で実行されるため、/statusへのGETリクエストにて学習の状態を参照する。事前に、acquaintance APIを使いデータを投入する必要がある。")
 	@ApiResponses(value={
 			@ApiResponse(code=200, message="学習の実行を開始"),
-			@ApiResponse(code=404, message="指定したgroupが存在しない。"),
+			@ApiResponse(code=404, message="指定したgroupIdが存在しない。"),
 			@ApiResponse(code=409, message="前回実行した学習を継続中")
 	})
 	public void train(){
 		personSearchService.train(groupId);
 	}
-/*
-	@GetMapping()
-	@ApiOperation(value = "対象の学習器が学習中かどうかを判断するAPI")
-	public void status(){
 	
+	@GetMapping(path="status")
+	@ApiOperation(value = "学習状態を取得するためのAPI非同期で結果を返す。")
+	public TrainResult getTrainStatus(){
+		TrainResult result = null;
+		
+		return result;
 	}
-*/
+
 }
