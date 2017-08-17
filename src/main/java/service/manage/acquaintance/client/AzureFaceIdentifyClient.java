@@ -32,6 +32,7 @@ import service.manage.acquaintance.client.model.Person;
 import service.manage.acquaintance.client.model.PersonGroup;
 import service.manage.acquaintance.client.model.ResultIdentify;
 import service.manage.acquaintance.client.model.TrainResult;
+import service.manage.acquaintance.domain.service.exception.NoHumanFaceException;
 
 @Slf4j
 @Component
@@ -162,7 +163,7 @@ public class AzureFaceIdentifyClient {
 		List<String> faceIds = faceDetect(image);
 		
 		if(faceIds.isEmpty()){
-			throw new RuntimeException("No contain human face in the image.");
+			throw new NoHumanFaceException("No contain human face in the image.");
 		}
 		
 		Identify payload = new Identify();

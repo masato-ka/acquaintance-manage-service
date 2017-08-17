@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.domain.service.exception.ApiLimitedException;
 import service.manage.acquaintance.domain.service.exception.MalformedRequestException;
+import service.manage.acquaintance.domain.service.exception.NoHumanFaceException;
 import service.manage.acquaintance.domain.service.exception.ResourceNotFoundException;
 import service.manage.acquaintance.domain.service.exception.TrainingResourceLockException;
 import service.manage.acquaintance.domain.service.exception.UserResourceLimiteException;
@@ -18,7 +19,7 @@ import service.manage.acquaintance.domain.service.exception.UserResourceLimiteEx
 @Aspect
 @Component
 public class AzureClientExceptionAspect {
-
+		
 	@AfterThrowing(value = "within(service.manage.acquaintance.domain.service.AcquaintanceService)", throwing="e")
 	public void processException(JoinPoint jp, HttpClientErrorException e){
 		if(HttpStatus.NOT_FOUND == e.getStatusCode()){

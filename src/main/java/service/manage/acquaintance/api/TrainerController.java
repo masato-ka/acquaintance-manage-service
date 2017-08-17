@@ -41,7 +41,7 @@ public class TrainerController {
 	@ApiOperation(value = "学習状態を取得するためのAPI非同期で結果を返す。")
 	public TrainResult getTrainStatus(){
 		TrainResult result = null;
-		
+		result = personSearchService.getTrainStatus(groupId);
 		return result;
 	}
 

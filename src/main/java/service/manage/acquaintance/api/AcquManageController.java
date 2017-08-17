@@ -46,6 +46,7 @@ public class AcquManageController {
     )
 	public List<Acquaintance> getAllAcqu(){
 		List<Acquaintance> result = acquService.getAcquaList();
+		//TODO グループが存在しない場合に200を送る。
 		return result;
 	}
 	

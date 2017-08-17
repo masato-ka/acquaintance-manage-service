@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.client.AzureFaceIdentifyClient;
 import service.manage.acquaintance.client.model.FaceDetectResult;
 import service.manage.acquaintance.client.model.ResultIdentify;
@@ -14,6 +15,7 @@ import service.manage.acquaintance.client.model.TrainResult;
 import service.manage.acquaintance.domain.model.Acquaintance;
 import service.manage.acquaintance.domain.model.SearchResult;
 
+@Slf4j
 @Service
 public class PersonSearchService {
 
@@ -47,12 +49,15 @@ public class PersonSearchService {
 				.sorted((pi1,pi2)->pi1.getConfidence().compareTo(pi2.getConfidence()))
 				.collect(Collectors.toList());
 			//TODO 未確認の人の顔が投げられた時にどうするか。
-			
-			ResultIdentify.PersonIdentify sortedResult = sorted.get(0);
-			
-			Acquaintance acquaintance = acquService.getOneWithAzurePersonId(sortedResult.getPersonId());
-			SearchResult searchResult = new SearchResult(sortedResult.getConfidence(), acquaintance);
-			result.add(searchResult);
+			try{
+				ResultIdentify.PersonIdentify sortedResult = sorted.get(0);
+				
+				Acquaintance acquaintance = acquService.getOneWithAzurePersonId(sortedResult.getPersonId());
+				SearchResult searchResult = new SearchResult(sortedResult.getConfidence(), acquaintance);
+				result.add(searchResult);
+			}catch (IndexOutOfBoundsException e){
+				log.warn("No contain person data in search result.");
+			}
 		}
 	
 		return result;
