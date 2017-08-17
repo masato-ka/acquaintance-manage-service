@@ -19,11 +19,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.domain.model.Acquaintance;
 import service.manage.acquaintance.domain.model.FaceImage;
 import service.manage.acquaintance.domain.service.AcquaintanceService;
 import service.manage.acquaintance.domain.service.FaceImageService;
 
+@Slf4j
 @RestController
 @RequestMapping(path="/api/v1/acquaintancies")
 @Api(value="acquaintancies", description="ユーザ情報の管理を行うAPI")
@@ -62,6 +64,7 @@ public class AcquManageController {
 	}
     )
 	public Acquaintance saveAcqu(@RequestBody Acquaintance acquaintance){
+		log.info(acquaintance.toString());
 		return acquService.save(acquaintance);
 	}
 	

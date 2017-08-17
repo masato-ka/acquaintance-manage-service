@@ -28,6 +28,7 @@ public class AzureClientExceptionAspect {
 			throw new ResourceNotFoundException();
 		}else if(HttpStatus.BAD_REQUEST == e.getStatusCode()){
 			//リクエストデータが不正
+			//TODO 処理メッセージごとに違うエラーを返すように詳細化すること。
 			log.error(e.getResponseBodyAsString());
 			throw new MalformedRequestException();
 		}else if(HttpStatus.FORBIDDEN == e.getStatusCode()){

@@ -48,7 +48,6 @@ public class PersonSearchService {
 			List<ResultIdentify.PersonIdentify> sorted = personIdentifies.stream()
 				.sorted((pi1,pi2)->pi1.getConfidence().compareTo(pi2.getConfidence()))
 				.collect(Collectors.toList());
-			//TODO 未確認の人の顔が投げられた時にどうするか。
 			try{
 				ResultIdentify.PersonIdentify sortedResult = sorted.get(0);
 				

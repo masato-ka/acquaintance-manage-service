@@ -46,11 +46,13 @@ public class AcquaintanceService {
 		try{
 			personId = afiClient
 						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
+			log.info(personId.toString());
 		}catch(HttpClientErrorException e){
 			if(HttpStatus.NOT_FOUND == e.getStatusCode()){
 				afiClient.createPersonGroup(groupId, "test", "Hackason.");
 				personId = afiClient
 						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
+				log.info(personId.toString());
 			}
 		}
 		//TODO 上記処理失敗時に以降処理せずエラーにすること。

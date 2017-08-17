@@ -34,7 +34,7 @@ public class SeacherController {
 	@ApiOperation(value = "画像から登録ユーザの検索を行う。")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "既知ユーザの検索に成功"),
-            @ApiResponse(code = 404, message = "検索ユーザが存在しない")
+            @ApiResponse(code = 404, message = "顔画像が含まれない画像データ")
     }
     )
 	public List<SearchResult> search(@RequestBody MultipartFile image){
