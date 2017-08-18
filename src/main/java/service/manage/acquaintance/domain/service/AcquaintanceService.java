@@ -96,7 +96,9 @@ public class AcquaintanceService {
 		afiClient.createPersonGroup(groupId, groupName, userData);
 	}
 	public void deletePersonGroup(){
+		//TODO groupId複数対応時には要修正
 		afiClient.deletePersonGroups(groupId);
+		acquaRepository.deleteAll();
 	}
 	
 }
