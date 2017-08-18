@@ -29,16 +29,7 @@ public class AcquManagerExceotionController extends ResponseEntityExceptionHandl
 	public void personGroupNotFoundException(HttpServletRequest req, PersonGroupNotFoundException e){
 		
 	}
-/*	
-	{
-		  "timestamp": 1502948694781,
-		  "status": 500,
-		  "error": "Internal Server Error",
-		  "exception": "org.springframework.web.client.HttpClientErrorException",
-		  "message": "400 Bad Request",
-		  "path": "/api/v1/searcher"
-		}
-*/	
+
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(NoHumanFaceException.class)
 	public void noFumanFaceException(HttpServletRequest req, NoHumanFaceException e){

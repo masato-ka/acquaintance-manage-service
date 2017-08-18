@@ -29,6 +29,8 @@ public class AzureClientExceptionAspect {
 		}else if(HttpStatus.BAD_REQUEST == e.getStatusCode()){
 			//リクエストデータが不正
 			//TODO 処理メッセージごとに違うエラーを返すように詳細化すること。
+			
+			e.getMessage();
 			log.error(e.getResponseBodyAsString());
 			throw new MalformedRequestException();
 		}else if(HttpStatus.FORBIDDEN == e.getStatusCode()){
@@ -44,6 +46,16 @@ public class AzureClientExceptionAspect {
 			log.error(e.getResponseBodyAsString());
 			throw new ApiLimitedException();
 		}
+/*
+		{
+		  "timestamp": 1502948694781,
+		  "status": 500,
+		  "error": "Internal Server Error",
+		  "exception": "org.springframework.web.client.HttpClientErrorException",
+		  "message": "400 Bad Request",
+		  "path": "/api/v1/searcher"
+		}
+*/
 		
 	}
 	

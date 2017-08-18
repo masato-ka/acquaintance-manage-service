@@ -40,7 +40,7 @@ public class AzureFaceIdentifyClient {
 	
 	private final RestTemplate restTemplate;
 	
-	@Value("{azure.face.api.ServerUrl}")
+	@Value("${azure.face.api.ServerUrl}")
 	private String rootUri;
 	@Value("${azure.face.api.ServerUrl}/face/v1.0/identify")
 	private String identifyFaceUri;

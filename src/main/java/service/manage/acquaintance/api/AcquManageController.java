@@ -112,7 +112,7 @@ public class AcquManageController {
             @ApiResponse(code = 200, message = "画像データの追加に成功"),
             @ApiResponse(code = 500, message= "画像の追加処理中にエラーが発生")
 	}
-    )
+    ) //TODO 引数をtrainImageからimageに変更すること。合わせて全体に名前を統一すること。 
 	public FaceImage putImage(@PathVariable Integer acquaintanceId, @RequestBody MultipartFile trainImage) throws IOException{
 		Acquaintance acquaintance = acquService.getAcquaById(acquaintanceId);
 		FaceImage result = faceImageService.saveFaceImage(acquaintance, trainImage.getBytes());

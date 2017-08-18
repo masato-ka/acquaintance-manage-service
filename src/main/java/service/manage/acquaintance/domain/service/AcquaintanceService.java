@@ -53,9 +53,11 @@ public class AcquaintanceService {
 				personId = afiClient
 						.createPerson(acqua.getAzureGroupId(), acqua.getPersonName(), acqua.getPersonName());
 				log.info(personId.toString());
+			}else{
+				//TODO personName未指定時のエラー処理(BAD Request
+				throw e;
 			}
 		}
-		//TODO 上記処理失敗時に以降処理せずエラーにすること。
 		acqua.setAzurePersonId(personId.get("personId"));
 		Acquaintance result = acquaRepository.save(acqua);
 		return result;
