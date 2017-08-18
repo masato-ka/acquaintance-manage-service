@@ -83,7 +83,11 @@ public class AcquaintanceService {
 	}
 	
 	public Acquaintance getAcquaById(int id){
-		return acquaRepository.findOne(id);
+		Acquaintance result = acquaRepository.findOne(id);
+		if(result==null){
+			throw new ResourceNotFoundException(); 
+		}
+		return result;
 	}
 	
 	

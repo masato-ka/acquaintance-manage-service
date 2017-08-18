@@ -143,7 +143,7 @@ public class AcquManageController {
 	)
 	public List<FaceImage> readImage(@PathVariable Integer acquaintanceId){
 		Acquaintance acquaintance = this.acquService.getAcquaById(acquaintanceId);
-		return acquaintance.getFaceImage();
+		return faceImageService.getFaceImagiByAcquaIntance(acquaintance);
 	}
 	
 	@DeleteMapping(path="/groupId")

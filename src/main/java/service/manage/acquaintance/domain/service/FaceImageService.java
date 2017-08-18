@@ -1,5 +1,6 @@
 package service.manage.acquaintance.domain.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import service.manage.acquaintance.client.AzureFaceIdentifyClient;
 import service.manage.acquaintance.domain.model.Acquaintance;
 import service.manage.acquaintance.domain.model.FaceImage;
 import service.manage.acquaintance.domain.repository.FaceImageRepository;
+import service.manage.acquaintance.domain.service.exception.ResourceNotFoundException;
 
 @Service
 public class FaceImageService {
@@ -28,6 +30,7 @@ public class FaceImageService {
 	
 	public FaceImage saveFaceImage(Acquaintance acquaintance, byte [] image){
 		FaceImage faceImage = new FaceImage();
+		
 		Map<String, String> result = afiClient.addPersonFaceImage(groupId, 
 																  acquaintance.getAzurePersonId(),
 																  image);
@@ -40,6 +43,12 @@ public class FaceImageService {
 		return faceImage;
 	}
 	
+	public List<FaceImage> getFaceImagiByAcquaIntance(Acquaintance acquaintance){
+		List<FaceImage> result = acquaintance.getFaceImage();
+		if(result == null){throw new ResourceNotFoundException();}
+		return result;
+	}
+	
 	public void deleteFaceImage(Integer acquaintanceId, Integer imageId){
 		FaceImage faceImage = faceImageRepository.getOne(imageId);
 		Acquaintance acquaintance = faceImage.getAcquaintance();
@@ -50,8 +59,6 @@ public class FaceImageService {
 			//TODO create new Exception;
 			throw new RuntimeException();
 		}
-		
-		
 	}
 	
 	public byte[] loadImage(String fileName){

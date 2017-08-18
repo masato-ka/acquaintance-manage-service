@@ -21,6 +21,11 @@ import service.manage.acquaintance.domain.service.exception.UserResourceLimiteEx
 @Component
 public class AzureClientExceptionAspect {
 	
+	@AfterThrowing(value = "within(service.manage.acquaintance.domain.service.FaceImageService)", throwing="e")
+	public void processExceptionFaceImageService(JoinPoint jp, NullPointerException e){
+		throw new ResourceNotFoundException();
+	}
+	
 	@AfterThrowing(value = "within(service.manage.acquaintance.domain.service.PersonSearchService)", throwing="e")
 	public void processExceptionSearchService(JoinPoint jp, HttpClientErrorException e){
 		if(e.getStatusCode().equals(HttpStatus.BAD_REQUEST)){

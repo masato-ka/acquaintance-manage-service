@@ -1,7 +1,5 @@
 package service.manage.acquaintance.api.exception;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,11 +9,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.http.HttpStatus;
 
-import service.manage.acquaintance.domain.model.SearchResult;
 import service.manage.acquaintance.domain.service.exception.ApiLimitedException;
 import service.manage.acquaintance.domain.service.exception.MalformedRequestException;
 import service.manage.acquaintance.domain.service.exception.NoHumanFaceException;
-import service.manage.acquaintance.domain.service.exception.NoTrainSearchException;
 import service.manage.acquaintance.domain.service.exception.ResourceNotFoundException;
 import service.manage.acquaintance.domain.service.exception.TrainingResourceLockException;
 import service.manage.acquaintance.domain.service.exception.UserResourceLimiteException;
