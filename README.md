@@ -25,9 +25,19 @@ And create jar file in acquaintance-manage-service/target folder.
 ## Run the service.
 
 ~~~
-$java -Dazure.face.api.subscription=Your Azure subscription -Dazure.face.api.groupId=Any group id -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
+$java -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.groupId=<Any group id> -Dazure.face.api.ServerUrl=Your host domain -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
 ~~~
 
+ * Enviroment valiable examples 
+ 
+ |Env value                  | example value|
+ |:--------------------------|------------:|
+ |azure.face.api.groupId     | MyFrends    |
+ |azure.face.api.ServerUrl   |https://westus.api.cognitive.microsoft.com|
+ 
+ See in detail.
+ [Azure official documents](https://docs.microsoft.com/ja-jp/azure/cognitive-services/face/face-api-how-to-topics/howtoidentifyfacesinimage)
+ 
 ## Usage
 
 This service provide REST API Interface. You can using service via the API.
