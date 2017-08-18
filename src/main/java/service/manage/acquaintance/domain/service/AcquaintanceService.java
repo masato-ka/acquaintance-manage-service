@@ -72,6 +72,9 @@ public class AcquaintanceService {
 	public void delete(int id){
 		//Azure側のIDを取得する。
 		Acquaintance target = acquaRepository.findOne(id);
+		if(target == null){
+			throw new ResourceNotFoundException();
+		}
 		//TODO 紐づく画像データの削除を実行する。
 		afiClient.deletePerson(target.getAzureGroupId(), target.getAzurePersonId());
 		acquaRepository.delete(id);

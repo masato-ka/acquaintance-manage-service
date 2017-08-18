@@ -3,6 +3,8 @@ package service.manage.acquaintance.domain.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -51,13 +53,17 @@ public class FaceImageService {
 	
 	public void deleteFaceImage(Integer acquaintanceId, Integer imageId){
 		FaceImage faceImage = faceImageRepository.getOne(imageId);
-		Acquaintance acquaintance = faceImage.getAcquaintance();
+		Acquaintance acquaintance = null;
+		try{
+			acquaintance = faceImage.getAcquaintance();
+		}catch(EntityNotFoundException e){
+			throw new ResourceNotFoundException();
+		}
 		if(acquaintanceId == acquaintance.getPersonId()){
 			faceImageRepository.delete(imageId);
 			afiClient.deletePersonFaceImage(acquaintance.getAzureGroupId(), acquaintance.getAzurePersonId(), faceImage.getPersistedFaceId());
 		}else{
-			//TODO create new Exception;
-			throw new RuntimeException();
+			throw new ResourceNotFoundException();
 		}
 	}
 	
