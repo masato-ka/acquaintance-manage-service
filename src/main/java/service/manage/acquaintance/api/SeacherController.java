@@ -1,6 +1,7 @@
 package service.manage.acquaintance.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ApiResponse;
 import service.manage.acquaintance.domain.model.SearchResult;
 import service.manage.acquaintance.domain.service.PersonSearchService;
+import service.manage.acquaintance.domain.service.exception.NoTrainSearchException;
 
 @RestController
 @RequestMapping(path="/api/v1/searcher")
@@ -37,16 +39,14 @@ public class SeacherController {
             @ApiResponse(code = 404, message = "顔画像が含まれない画像データ")
     }
     )
-	public List<SearchResult> search(@RequestBody MultipartFile image){
+	public List<SearchResult> search(@RequestBody MultipartFile image) throws IOException{
 		
 		List<SearchResult> searchResult = null;
-		try {
+		try{
 			searchResult = this.personSearchService.search(groupId, image.getBytes());
-		} catch (IOException e) {
-			// TODO searcherの処理
-			e.printStackTrace();
+		}catch(NoTrainSearchException e){
+			searchResult = new ArrayList<>();
 		}
-		
 		return searchResult;
 	}
 	

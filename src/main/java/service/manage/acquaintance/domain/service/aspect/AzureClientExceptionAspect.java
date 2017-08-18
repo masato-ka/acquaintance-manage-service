@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import service.manage.acquaintance.domain.service.exception.ApiLimitedException;
 import service.manage.acquaintance.domain.service.exception.MalformedRequestException;
 import service.manage.acquaintance.domain.service.exception.NoHumanFaceException;
+import service.manage.acquaintance.domain.service.exception.NoTrainSearchException;
 import service.manage.acquaintance.domain.service.exception.ResourceNotFoundException;
 import service.manage.acquaintance.domain.service.exception.TrainingResourceLockException;
 import service.manage.acquaintance.domain.service.exception.UserResourceLimiteException;
@@ -19,7 +20,15 @@ import service.manage.acquaintance.domain.service.exception.UserResourceLimiteEx
 @Aspect
 @Component
 public class AzureClientExceptionAspect {
-		
+	
+	@AfterThrowing(value = "within(service.manage.acquaintance.domain.service.PersonSearchService)", throwing="e")
+	public void processExceptionSearchService(JoinPoint jp, HttpClientErrorException e){
+		if(e.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+			throw new NoTrainSearchException("Failed search image because did not complete pre train.");
+		}
+	}
+	
+	
 	@AfterThrowing(value = "within(service.manage.acquaintance.domain.service.AcquaintanceService)", throwing="e")
 	public void processException(JoinPoint jp, HttpClientErrorException e){
 		if(HttpStatus.NOT_FOUND == e.getStatusCode()){
