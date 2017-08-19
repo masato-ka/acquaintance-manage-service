@@ -36,7 +36,7 @@ $java -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.g
 
 * Startup as production environment
 
-The service start up with CLEARDB(MySQL) and The service get db setting from environment value as CLEARDB_DATABASE_URL. Thus, you can start up this service on Heroku. If you use your own cloud, You should be setting CLEARDB_DATABASE_URL to environment value.
+The service start up with CLEARDB(MySQL) and The service get db setting from environment value as CLEARDB_DATABASE_URL. Thus, you can start up this service on Heroku. If you use your own cloud, You should be setting CLEARDB_DATABASE_URL to environment value. However, you can not specify port number of MySQL service. only support default port. 
 
 for example 
 
