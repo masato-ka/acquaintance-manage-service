@@ -41,14 +41,17 @@ The service start up with CLEARDB(MySQL) and The service get db setting from env
 for example 
 
 ~~~
+
 CLEARDB_DATABASE_URL=mysql://<username>:<password>@<host>/<databse>?reconnect=true 
+
 ~~~
+
 
 ~~~
 
 $java -Dspring.profiles.active=production -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.groupId=<Any group id> -Dazure.face.api.ServerUrl=Your host domain -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
 
-CLEARDB_DATABASE_URL~~~
+~~~
 
  * Enviroment valiable examples 
  
