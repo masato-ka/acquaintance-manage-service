@@ -54,8 +54,10 @@ public class MySQLConfiguration {
 		log.info(username);
 		log.info(password);
 		log.info(this.dataSourceProperties.getClassLoader().toString());
+		log.info(this.dataSourceProperties.getDriverClassName());
 		DataSourceBuilder factory = DataSourceBuilder
-				.create(this.dataSourceProperties.getClassLoader())
+				.create()
+				.driverClassName(this.dataSourceProperties.getDriverClassName())
 				.url(url)
 				.username(username)
 				.password(password);
