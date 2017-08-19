@@ -53,7 +53,7 @@ public class MySQLConfiguration {
 		}
 		
 		DataSourceBuilder factory = DataSourceBuilder
-				.create()
+				.create(this.dataSourceProperties.getClassLoader())
 				.driverClassName(this.dataSourceProperties.getDriverClassName())
 				.url(url)
 				.username(username)
