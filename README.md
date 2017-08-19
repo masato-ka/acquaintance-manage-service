@@ -24,14 +24,32 @@ And create jar file in acquaintance-manage-service/target folder.
 
 ## Run the service.
 
+* Startup as dev environment
+
+The service start up with H2 DB(in memory db)
+
 ~~~
+
 $java -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.groupId=<Any group id> -Dazure.face.api.ServerUrl=Your host domain -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
+
+~~~
+
+* Startup as production environment
+
+The service start up with CLEARDB(MySQL) and The service get db setting from environment value as DATABASE_URL. Thus, you can start up this service on Heroku. If you use your own cloud, You should be setting DATABASE_URL to environment value.
+for example DATABASE_URL=mysql://<username>:<password>@<host>/<databse>?reconnect=true 
+
+~~~
+
+$java -Dspring.profiles.active=production -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.groupId=<Any group id> -Dazure.face.api.ServerUrl=Your host domain -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
+
 ~~~
 
  * Enviroment valiable examples 
  
  |Env value                  | example value|
  |:--------------------------|------------:|
+ |spring.profiles.active     | production  |
  |azure.face.api.groupId     | MyFrends    |
  |azure.face.api.ServerUrl   |https://westus.api.cognitive.microsoft.com|
  
