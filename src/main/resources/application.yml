@@ -16,7 +16,7 @@ spring:
 ---
 spring:
   profiles: production
-  datasource:
+  datasource: 
     driverClassName: com.mysql.jdbc.Driver
     dbcp:
       test-on-borrow: true

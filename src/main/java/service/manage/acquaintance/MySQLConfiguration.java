@@ -53,6 +53,7 @@ public class MySQLConfiguration {
 		log.info(url);
 		log.info(username);
 		log.info(password);
+		log.info(this.dataSourceProperties.getClassLoader().toString());
 		DataSourceBuilder factory = DataSourceBuilder
 				.create(this.dataSourceProperties.getClassLoader())
 				.url(url)
