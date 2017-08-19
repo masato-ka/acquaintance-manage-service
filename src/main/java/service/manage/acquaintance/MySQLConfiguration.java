@@ -26,7 +26,6 @@ public class MySQLConfiguration {
 		this.dataSourceProperties = dataSourceProperties; 
 	}
 	
-	@ConfigurationProperties(prefix = "spring.datasource")
 	@Bean(destroyMethod="close")
 	DataSource realDataSource() throws URISyntaxException{
 		
