@@ -7,6 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,8 +28,12 @@ public class Acquaintance {
 	@Id
 	@GeneratedValue
 	private Integer personId;
+	@NotNull
 	private String personName;
+	@Min(0)
+	@Max(200)
 	private Integer age;
+	@Pattern(regexp="^male$|^female$")
 	private String sex;
 	@OneToMany(mappedBy="acquaintance")
 	private List<FaceImage> faceImage;

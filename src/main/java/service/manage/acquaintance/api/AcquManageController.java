@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,7 +64,7 @@ public class AcquManageController {
             @ApiResponse(code = 404, message = "該当するグループが存在しない。")
 	}
     )
-	public Acquaintance saveAcqu(@RequestBody Acquaintance acquaintance){
+	public Acquaintance saveAcqu(@RequestBody @Validated Acquaintance acquaintance){
 		log.info(acquaintance.toString());
 		return acquService.save(acquaintance);
 	}
@@ -88,7 +89,7 @@ public class AcquManageController {
             @ApiResponse(code = 404, message = "該当するユーザ情報が存在しない。")
 	}
     )
-	public Acquaintance updateAcqua(@PathVariable Integer acquaintanceId, @RequestBody Acquaintance acquaintance){
+	public Acquaintance updateAcqua(@PathVariable Integer acquaintanceId, @RequestBody @Validated Acquaintance acquaintance){
 		acquaintance.setPersonId(acquaintanceId);
 		return acquService.update(acquaintance);
 	}
