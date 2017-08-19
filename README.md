@@ -36,14 +36,19 @@ $java -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.g
 
 * Startup as production environment
 
-The service start up with CLEARDB(MySQL) and The service get db setting from environment value as DATABASE_URL. Thus, you can start up this service on Heroku. If you use your own cloud, You should be setting DATABASE_URL to environment value.
-for example DATABASE_URL=mysql://<username>:<password>@<host>/<databse>?reconnect=true 
+The service start up with CLEARDB(MySQL) and The service get db setting from environment value as CLEARDB_DATABASE_URL. Thus, you can start up this service on Heroku. If you use your own cloud, You should be setting CLEARDB_DATABASE_URL to environment value.
+
+for example 
+
+~~~
+CLEARDB_DATABASE_URL=mysql://<username>:<password>@<host>/<databse>?reconnect=true 
+~~~
 
 ~~~
 
 $java -Dspring.profiles.active=production -Dazure.face.api.subscription=<Your Azure subscription> -Dazure.face.api.groupId=<Any group id> -Dazure.face.api.ServerUrl=Your host domain -jar target/acquaintance-manage-service-0.0.1-SNAPSHOT.jar 
 
-~~~
+CLEARDB_DATABASE_URL~~~
 
  * Enviroment valiable examples 
  

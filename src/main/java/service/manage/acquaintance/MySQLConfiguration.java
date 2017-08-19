@@ -32,7 +32,7 @@ public class MySQLConfiguration {
 		String password = null;;
 		
 		
-		String databaseUrl = System.getenv("DATABASE_URL");
+		String databaseUrl = System.getenv("CLEARDB_DATABASE_URL");
 		if(databaseUrl != null){
 			
 			URI dbUri = new URI(databaseUrl);
