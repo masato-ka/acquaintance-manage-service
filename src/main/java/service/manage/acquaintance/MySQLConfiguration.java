@@ -39,7 +39,7 @@ public class MySQLConfiguration {
 		if(databaseUrl != null){
 			
 			URI dbUri = new URI(databaseUrl);
-			url = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath() + "?reconnect=true";
+			url = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
 			username = dbUri.getUserInfo().split(":")[0];
 			password = dbUri.getUserInfo().split(":")[1];
 			
