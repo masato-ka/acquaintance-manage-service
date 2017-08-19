@@ -18,6 +18,10 @@ spring:
   profiles: production
   datasource:
     driverClassName: com.mysql.jdbc.Driver
+    dbcp:
+      test-on-borrow: true
+      validation-query: SELECT1
+    
   jpa:
     database: MYSQL
     hibernate:
