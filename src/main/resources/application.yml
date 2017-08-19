@@ -22,7 +22,7 @@ spring:
       test-on-borrow: true
       validation-query: SELECT 1 FROM DUAL
       test-while-idle: true
-      time-between-eviction-runs-millis: 60000
+      time-between-eviction-runs-millis: 30000
   jpa:
     database: MYSQL
     hibernate:
