@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Profile("production")
 @Configuration
 public class MySQLConfiguration {
@@ -47,7 +49,10 @@ public class MySQLConfiguration {
 			password = this.dataSourceProperties.getPassword();
 			
 		}
-		
+		log.info(databaseUrl);
+		log.info(url);
+		log.info(username);
+		log.info(password);
 		DataSourceBuilder factory = DataSourceBuilder
 				.create(this.dataSourceProperties.getClassLoader())
 				.url(url)
