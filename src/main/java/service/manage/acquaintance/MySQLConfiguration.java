@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -23,6 +24,7 @@ public class MySQLConfiguration {
 		this.dataSourceProperties = dataSourceProperties; 
 	}
 	
+	@ConfigurationProperties(prefix="spring.datasource.tomcat")
 	@Bean(destroyMethod="close")
 	DataSource realDataSource() throws URISyntaxException{
 		
@@ -50,10 +52,10 @@ public class MySQLConfiguration {
 		
 		DataSourceBuilder factory = DataSourceBuilder
 				.create(this.dataSourceProperties.getClassLoader())
+				
 				.url(url)
 				.username(username)
 				.password(password);
-		
 		dataSource = factory.build();
 		return dataSource;
 		
