@@ -18,9 +18,16 @@ spring:
   profiles: production
   datasource: 
     driverClassName: com.mysql.jdbc.Driver
+    dbcp2:
+      test-on-borrow: true
+      validation-query: SELECT 1
+    dbcp:
+      test-on-borrow: true
+      validation-query: SELECT 1
     tomcat: 
       test-on-borrow: true
-      validation-query: SELECT 1 FROM DUAL
+      validation-query: SELECT 1
+      validation-interval: 30000
       test-while-idle: true
       time-between-eviction-runs-millis: 30000
   jpa:
